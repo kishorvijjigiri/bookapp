@@ -1,36 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./BookList.css";
 
 function BookList() {
   const [books, setBooks] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/bookapp/books`)
-      .then(response => {
-        setBooks(response.data);
+    fetch("http://localhost:8080/bookapp/books")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched books:", data);
+        setBooks(data);
       })
-      .catch(error => {
-        console.error("Error fetching books:", error);
-      });
+      .catch((err) => console.error("Error fetching books:", err));
   }, []);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>📚 Book List</h2>
-      {books.map(book => (
-        <div key={book.id} style={{
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-          padding: '10px',
-          marginBottom: '10px'
-        }}>
-          <h3>{book.title}</h3>
-          <p><strong>Author:</strong> {book.author}</p>
-          <button onClick={() => navigate(`/order/${book.id}`)}>Order</button>
-        </div>
-      ))}
+    <div>
+      <h2 style={{ textAlign: "center" }}>📚 Book List</h2>
+      <div className="book-container">
+        {books.map((book) => (
+          <div key={book.id} className="book-card">
+            <h4>{book.title}</h4>
+            <p>{book.author}</p>
+            <button
+              className="buy-button"
+              onClick={() => navigate(`/order/${book.id}`)}
+            >
+              Buy Now
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
